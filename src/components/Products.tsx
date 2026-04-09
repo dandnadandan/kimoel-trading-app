@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
+import { getProductsByCategory } from "@/data/products";
 
 // Category images
 import electricalImage from "@/assets/ELECTRICAL.jpg";
@@ -8,19 +10,10 @@ import mechanicalImage from "@/assets/MECHANICAL COMPONENTS.png";
 import pneumaticsImage from "@/assets/PNEUMATICS.png";
 import toolsImage from "@/assets/TOOLS.jpeg";
 
-// Product images
-import electricalSupplies from "@/assets/Electrical Supplies.jpg";
-import electricalPanel from "@/assets/Electrical Panel.png";
-import cableTray from "@/assets/Cable Tray.jpg";
-import acMotor from "@/assets/AC Motors and Gear Motors.png";
-import bearings from "@/assets/Bearing and Seal.jpg";
-import pneumaticsPart from "@/assets/Pneumatic Cylinder Accessories.jpg";
-import conveyor from "@/assets/Conveyor System.png";
-import jigs from "@/assets/Jigs and Fixtures.png";
-
 const Products = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activeTap, setActiveTap] = useState<string | null>(null); // For mobile tap highlight
+  const navigate = useNavigate();
 
   const categories = [
     {
@@ -49,66 +42,11 @@ const Products = () => {
     },
   ];
 
-  const subProducts: Record<
-    string,
-    { title: string; description: string; image: string; imageAlt: string }[]
-  > = {
-    Electrical: [
-      {
-        title: "Electrical Supply",
-        description: "Complete solutions for industrial and commercial use.",
-        image: electricalSupplies,
-        imageAlt: "Electrical supply",
-      },
-      {
-        title: "Electrical Panel",
-        description: "Durable and safe panels for power distribution.",
-        image: electricalPanel,
-        imageAlt: "Electrical panel",
-      },
-      {
-        title: "Cable Tray",
-        description: "Reliable cable trays for safe wiring management.",
-        image: cableTray,
-        imageAlt: "Cable tray",
-      },
-    ],
-    "Mechanical Components": [
-      {
-        title: "AC Motors and Gear Motors",
-        description: "Industrial-grade motors built for durability.",
-        image: acMotor,
-        imageAlt: "AC motor",
-      },
-      {
-        title: "Bearings & Seals",
-        description: "Durable bearings and seals for precision.",
-        image: bearings,
-        imageAlt: "Bearings and seals",
-      },
-    ],
-    "Automation & Pneumatics": [
-      {
-        title: "Pneumatic Cylinder Accessories",
-        description: "High-quality pneumatic parts for automation systems.",
-        image: pneumaticsPart,
-        imageAlt: "Pneumatics",
-      },
-    ],
-    "Systems & Tooling": [
-      {
-        title: "Conveyor System",
-        description: "Custom conveyor systems for industrial use.",
-        image: conveyor,
-        imageAlt: "Conveyor system",
-      },
-      {
-        title: "Jigs and Fixtures",
-        description: "Precision jigs and fixtures for manufacturing.",
-        image: jigs,
-        imageAlt: "Jigs and fixtures",
-      },
-    ],
+  // Get products for the active category from the new data structure
+  const currentProducts = activeCategory ? getProductsByCategory(activeCategory) : [];
+
+  const handleProductClick = (productId: string) => {
+    navigate(`/product/${productId}`);
   };
 
   const gridVariants = {
@@ -207,9 +145,9 @@ const Products = () => {
               viewport={{ once: true, amount: 0.2 }}
               variants={gridVariants}
             >
-              {subProducts[activeCategory].map((product, index) => (
+              {currentProducts.map((product, index) => (
                 <motion.div
-                  key={index}
+                  key={product.id}
                   variants={itemVariants}
                   whileHover={{ y: -6 }}
                   whileTap={{ scale: 0.98 }}
@@ -220,6 +158,7 @@ const Products = () => {
                     description={product.description}
                     image={product.image}
                     imageAlt={product.imageAlt}
+                    onToggle={() => handleProductClick(product.id)}
                   />
                 </motion.div>
               ))}

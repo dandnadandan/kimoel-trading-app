@@ -1,4 +1,5 @@
 import React from 'react';
+import ContactBar from '@/components/ContactBar';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Products from '@/components/Products';
@@ -11,6 +12,7 @@ import Footer from '@/components/Footer';
 const Index = () => {
   return (
     <div className="min-h-screen">
+      <ContactBar />
       <Header />
       <main>
         <Hero />
